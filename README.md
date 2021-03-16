@@ -10,7 +10,13 @@ yarn install
 
 ## Utilización
 
-Para correr el servidor, pego la siguiente URL en el navegador 
+Para correr el servidor, primero ejecuto el comando: 
+
+```bash
+yarn start
+```
+
+Y luego pego la siguiente URL en el navegador 
 
 ```bash
 http://localhost:4000/graphql
