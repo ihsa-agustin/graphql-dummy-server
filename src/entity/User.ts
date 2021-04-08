@@ -1,5 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from "typeorm";
 import { Field, Int, ObjectType } from "type-graphql";
+import { isNullableType } from "graphql";
 
 @ObjectType()
 @Entity()
@@ -71,4 +72,20 @@ export class User extends BaseEntity {
   @Field()
   @Column()
   password: string;
+
+  @Field()
+  @Column(() => isNullableType)
+  security_question_1: string;
+
+  @Field()
+  @Column(() => isNullableType)
+  security_question_2: string;
+
+  @Field()
+  @Column(() => isNullableType)
+  security_answer_1: string;
+
+  @Field()
+  @Column(() => isNullableType)
+  security_answer_2: string;
 }

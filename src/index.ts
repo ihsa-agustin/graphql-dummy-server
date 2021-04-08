@@ -15,7 +15,7 @@ import cors from "cors"
 
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [UserResolver]
+      resolvers: [UserResolver],
     }),
     context: ({ req, res }) => ({ req, res })
   });

@@ -1,8 +1,19 @@
 import { Resolver, Mutation, Arg, Query, InputType, Field } from "type-graphql";
+import { GraphQLJSONObject } from 'graphql-type-json';
+import PasswordValidation from "./PasswordValidation.class";
 import { User } from "../entity/User";
 
 @InputType()
 class LoginInput {
+  @Field()
+  identity_number: string;
+
+  @Field()
+  password: string;
+}
+
+@InputType()
+class PasswordRecoveryInput {
   @Field()
   identity_number: string;
 
@@ -59,10 +70,47 @@ class RegisterInput {
 
   @Field()
   password: string;
+
+  @Field()
+  security_question_1: string;
+
+  @Field()
+  security_question_2: string;
+
+  @Field()
+  security_answer_1: string;
+
+  @Field()
+  security_answer_2: string;
 }
 
 @Resolver()
 export class UserResolver {
+  @Mutation(() => GraphQLJSONObject || null)
+  async recoverPassword(
+    @Arg("data", () => PasswordRecoveryInput) data: PasswordRecoveryInput
+  ) {
+    console.log(data.password)
+    const password = new PasswordValidation(data.password);
+    if (password.validate()) {
+      return {
+        result: true,
+        errors: [],
+      };
+    }
+    const errors = [];
+
+    errors.push(
+      data.password.length === 0
+        ? "Debe completar el password"
+        : "El formato no es correcto"
+    );
+
+    return {
+      result: false,
+      errors: errors,
+    };
+  }
   @Mutation(() => User)
   async register(@Arg("data", () => RegisterInput) data: RegisterInput) {
     const user = await User.create(data).save();
@@ -70,7 +118,7 @@ export class UserResolver {
   }
 
   @Mutation(() => Boolean)
-  async login(@Arg("data", () => LoginInput) data: LoginInput) {
+  async signin(@Arg("data", () => LoginInput) data: LoginInput) {
     const user = await User.find({
       where: {
         identity_number: data.identity_number,
