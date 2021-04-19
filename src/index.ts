@@ -5,6 +5,7 @@ import { ApolloServer } from "apollo-server-express";
 import { buildSchema } from "type-graphql";
 import { UserResolver } from "./resolvers/UserResolver";
 import cors from "cors"
+import { PrestadoresResolver } from "./resolvers/PrestadoresResolver";
 
 (async () => {
   const app = express();
@@ -13,10 +14,17 @@ import cors from "cors"
 
   await createConnection();
 
+  try {
+    var schema = await buildSchema({
+      resolvers: [UserResolver, PrestadoresResolver]
+    })
+  } catch (e) {
+    console.error(e)
+    throw e
+  }
+
   const apolloServer = new ApolloServer({
-    schema: await buildSchema({
-      resolvers: [UserResolver],
-    }),
+    schema,
     context: ({ req, res }) => ({ req, res })
   });
 

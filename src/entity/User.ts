@@ -1,65 +1,24 @@
 import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from "typeorm";
 import { Field, Int, ObjectType } from "type-graphql";
-import { isNullableType } from "graphql";
 
 @ObjectType()
 @Entity()
 export class User extends BaseEntity {
   @Field(() => Int)
   @PrimaryGeneratedColumn()
-  id: number;
+  user_id: number;
 
   @Field()
   @Column()
-  first_name: string;
+  user_identification: string;
 
   @Field()
   @Column()
-  last_name: string;
+  user_identification_type: string;
 
   @Field()
   @Column()
-  identity_number: string;
-
-  @Field()
-  @Column()
-  health_insurance_name: string;
-
-  @Field()
-  @Column()
-  health_insurance_id: string;
-
-  @Field()
-  @Column()
-  mobile_phone: string;
-
-  @Field()
-  @Column()
-  phone: string;
-
-  @Field()
-  @Column()
-  street: string;
-
-  @Field()
-  @Column()
-  number: string;
-
-  @Field()
-  @Column()
-  apartment_suit: string;
-
-  @Field()
-  @Column()
-  city: string;
-
-  @Field()
-  @Column()
-  neighborhood: string;
-
-  @Field()
-  @Column()
-  province: string;
+  user_name: string;
 
   @Field()
   @Column()
@@ -67,25 +26,33 @@ export class User extends BaseEntity {
 
   @Field()
   @Column()
-  emergency_phone: string;
+  email_verified: boolean;
 
   @Field()
   @Column()
-  password: string;
+  address: string;
 
   @Field()
-  @Column(() => isNullableType)
-  security_question_1: string;
+  @Column()
+  phone: string;
 
   @Field()
-  @Column(() => isNullableType)
-  security_question_2: string;
+  @Column()
+  is_blocked: boolean;
 
   @Field()
-  @Column(() => isNullableType)
-  security_answer_1: string;
+  @Column()
+  name: string;
 
   @Field()
-  @Column(() => isNullableType)
-  security_answer_2: string;
+  @Column()
+  picture: string;
+
+  @Field()
+  @Column()
+  identities: string;
+
+  @Field()
+  @Column()
+  created_at: string;
 }

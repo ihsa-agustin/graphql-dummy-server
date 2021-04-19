@@ -24,110 +24,75 @@ class PasswordRecoveryInput {
   password: string;
 }
 
+// @InputType()
+// class UserName {
+//   @Field()
+//   first_name: string;
+
+//   @Field()
+//   last_name: string;
+// }
+
+// @InputType()
+// class Address {
+//   @Field()
+//   province: string;
+
+//   @Field()
+//   location: string;
+
+//   @Field()
+//   neighborhood: string;
+
+//   @Field()
+//   street: string;
+
+//   @Field()
+//   street_number: string;
+
+//   @Field()
+//   floor: string;
+
+//   @Field()
+//   department: string;
+// }
+
+// @InputType()
+// class Phone {
+//   @Field()
+//   type: string;
+
+//   @Field()
+//   number: string;
+// }
+
+// @InputType()
+// class Identities {
+//   @Field()
+//   user_id: string;
+
+//   @Field()
+//   provider: string;
+
+//   @Field()
+//   connection: string;
+// }
+
+
+
 @InputType()
 class RegisterInput {
   @Field()
-  first_name: string;
+  user_id: number;
 
-  @Field()
-  last_name: string;
-
-  @Field()
-  identity_number: string;
-
-  @Field()
-  health_insurance_name: string;
-
-  @Field()
-  health_insurance_id: string;
-
-  @Field()
-  mobile_phone: string;
-
-  @Field()
-  phone: string;
-
-  @Field()
-  street: string;
-
-  @Field()
-  number: string;
-
-  @Field()
-  apartment_suit: string;
-
-  @Field()
-  city: string;
-
-  @Field()
-  neighborhood: string;
-
-  @Field()
-  province: string;
-
-  @Field()
-  email: string;
-
-  @Field()
-  emergency_phone: string;
-
-  @Field()
-  password: string;
-
-  @Field()
-  security_question_1: string;
-
-  @Field()
-  security_question_2: string;
-
-  @Field()
-  security_answer_1: string;
-
-  @Field()
-  security_answer_2: string;
-}
-
-interface NameInterface {
-  first_name: string
-  last_name: string
-}
-
-interface AddressInterface {
-  province: string
-  location: string
-  neighborhood: string
-  street: string
-  street_number: string
-  floor: string
-  department: string
-}
-
-interface PhoneInterface {
-  type: string
-  number: string
-}
-
-interface IdentitiesInterface {
-  user_id: string
-  provider: string
-  connection: string
-}
-
-@ObjectType()
-export class Profiler {
-  @Field()
-  id: string
-
-  @Field()
-  user_id: string
-  
   @Field()
   user_identification: string
   
   @Field()
   user_identification_type: string
   
-  user_name: [NameInterface]
+  @Field()
+  user_name: string
   
   @Field()
   email: string
@@ -135,9 +100,11 @@ export class Profiler {
   @Field()
   email_verified: boolean
 
-  address: [AddressInterface]
+  @Field()
+  address: string
   
-  phone: [PhoneInterface]
+  @Field()
+  phone: string
   
   @Field()
   is_blocked: boolean
@@ -148,7 +115,76 @@ export class Profiler {
   @Field()
   picture: string
 
-  identities: [IdentitiesInterface]
+  @Field()
+  identities: string
+
+  @Field()
+  created_at: string
+}
+
+// interface NameInterface {
+//   first_name: string
+//   last_name: string
+// }
+
+// interface AddressInterface {
+//   province: string
+//   location: string
+//   neighborhood: string
+//   street: string
+//   street_number: string
+//   floor: string
+//   department: string
+// }
+
+// interface PhoneInterface {
+//   type: string
+//   number: string
+// }
+
+// interface IdentitiesInterface {
+//   user_id: string
+//   provider: string
+//   connection: string
+// }
+
+@ObjectType()
+export class Profiler {
+  @Field()
+  user_id: number;
+  
+  @Field()
+  user_identification: string
+  
+  @Field()
+  user_identification_type: string
+  
+  @Field()
+  user_name: string
+  
+  @Field()
+  email: string
+  
+  @Field()
+  email_verified: boolean
+
+  @Field()
+  address: string
+  
+  @Field()
+  phone: string
+  
+  @Field()
+  is_blocked: boolean
+  
+  @Field()
+  name: string
+
+  @Field()
+  picture: string
+
+  @Field()
+  identities: string
 
   @Field()
   created_at: string
@@ -211,7 +247,7 @@ export class UserResolver {
 
   @Mutation(() => Boolean)
   async deleteAll() {
-    const users = (await User.find()).map(({ id }) => id);
+    const users = (await User.find()).map(({ user_id }) => user_id);
     users.forEach((id) => {
       User.delete(id);
     });
@@ -222,20 +258,19 @@ export class UserResolver {
   profiler(@Arg("data", () => ProfilerInput) _data: ProfilerInput) {
     return new Promise<Profiler>((resolve, reject) => {
       try {
-        resolve({
-          id: "1",  
-          user_id: "0|52234632",
+        resolve({ 
+          user_id: 0,
           user_identification: "10123456",
           user_identification_type: "DNI",
-          user_name: [
+          user_name: JSON.stringify([
             {
               first_name: "Lu Han",
               last_name: "Chin Cun Lu"
             }
-          ],
+          ]),
           email: "user@domain.com",
           email_verified: true,
-          address: [
+          address: JSON.stringify([
             {
               province: "string",
               location: "string",
@@ -245,23 +280,23 @@ export class UserResolver {
               floor: "string",
               department: "string"
             }
-          ],
-          phone: [
+          ]),
+          phone: JSON.stringify([
             {
               type: "Mobile | Residential",
               number: "string"
             }
-          ],
+          ]),
           is_blocked: false,
           name: "foo@bar.com",
           picture: "https://s.gravatar.com/avatar/foobar.png",
-          identities: [
+          identities: JSON.stringify([
             {
               user_id: "string",
               provider: "OAuth",
               connection: "Username-Password-Authentication"
             }
-          ],
+          ]),
           created_at: "2021-04-13T11:16:59.640Z"
         })
       } catch (error) {
