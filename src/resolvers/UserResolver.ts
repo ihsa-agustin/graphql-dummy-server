@@ -1,4 +1,4 @@
-import { Resolver, Mutation, Arg, Query, InputType, Field } from "type-graphql";
+import { Resolver, Mutation, Arg, Query, InputType, Field, ObjectType } from "type-graphql";
 import { GraphQLJSONObject } from 'graphql-type-json';
 import PasswordValidation from "./PasswordValidation.class";
 import { User } from "../entity/User";
@@ -6,7 +6,10 @@ import { User } from "../entity/User";
 @InputType()
 class LoginInput {
   @Field()
-  identity_number: string;
+  user_identification: string;
+
+  @Field()
+  user_identification_type: string;
 
   @Field()
   password: string;
@@ -84,13 +87,85 @@ class RegisterInput {
   security_answer_2: string;
 }
 
+interface NameInterface {
+  first_name: string
+  last_name: string
+}
+
+interface AddressInterface {
+  province: string
+  location: string
+  neighborhood: string
+  street: string
+  street_number: string
+  floor: string
+  department: string
+}
+
+interface PhoneInterface {
+  type: string
+  number: string
+}
+
+interface IdentitiesInterface {
+  user_id: string
+  provider: string
+  connection: string
+}
+
+@ObjectType()
+export class Profiler {
+  @Field()
+  id: string
+
+  @Field()
+  user_id: string
+  
+  @Field()
+  user_identification: string
+  
+  @Field()
+  user_identification_type: string
+  
+  user_name: [NameInterface]
+  
+  @Field()
+  email: string
+  
+  @Field()
+  email_verified: boolean
+
+  address: [AddressInterface]
+  
+  phone: [PhoneInterface]
+  
+  @Field()
+  is_blocked: boolean
+  
+  @Field()
+  name: string
+
+  @Field()
+  picture: string
+
+  identities: [IdentitiesInterface]
+
+  @Field()
+  created_at: string
+}
+
+@InputType()
+class ProfilerInput {
+  @Field()
+  auth_token: string
+}
+
 @Resolver()
 export class UserResolver {
   @Mutation(() => GraphQLJSONObject || null)
   async recoverPassword(
     @Arg("data", () => PasswordRecoveryInput) data: PasswordRecoveryInput
   ) {
-    console.log(data.password)
     const password = new PasswordValidation(data.password);
     if (password.validate()) {
       return {
@@ -98,7 +173,7 @@ export class UserResolver {
         errors: [],
       };
     }
-    const errors = [];
+    const errors: string[] = [];
 
     errors.push(
       data.password.length === 0
@@ -121,7 +196,7 @@ export class UserResolver {
   async signin(@Arg("data", () => LoginInput) data: LoginInput) {
     const user = await User.find({
       where: {
-        identity_number: data.identity_number,
+        identity_number: data.user_identification,
         password: data.password,
       },
     }).catch((error) => console.log(error));
@@ -142,4 +217,59 @@ export class UserResolver {
     });
     return true;
   }
+
+  @Query(() => Profiler)
+  profiler(@Arg("data", () => ProfilerInput) _data: ProfilerInput) {
+    return new Promise<Profiler>((resolve, reject) => {
+      try {
+        resolve({
+          id: "1",  
+          user_id: "0|52234632",
+          user_identification: "10123456",
+          user_identification_type: "DNI",
+          user_name: [
+            {
+              first_name: "Lu Han",
+              last_name: "Chin Cun Lu"
+            }
+          ],
+          email: "user@domain.com",
+          email_verified: true,
+          address: [
+            {
+              province: "string",
+              location: "string",
+              neighborhood: "string",
+              street: "string",
+              street_number: "string",
+              floor: "string",
+              department: "string"
+            }
+          ],
+          phone: [
+            {
+              type: "Mobile | Residential",
+              number: "string"
+            }
+          ],
+          is_blocked: false,
+          name: "foo@bar.com",
+          picture: "https://s.gravatar.com/avatar/foobar.png",
+          identities: [
+            {
+              user_id: "string",
+              provider: "OAuth",
+              connection: "Username-Password-Authentication"
+            }
+          ],
+          created_at: "2021-04-13T11:16:59.640Z"
+        })
+      } catch (error) {
+        reject(error)
+      }
+      
+    })
+  }
 }
+
+
