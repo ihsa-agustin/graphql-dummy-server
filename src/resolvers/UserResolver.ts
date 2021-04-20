@@ -111,8 +111,8 @@ class RegisterInput {
   @Field()
   address: Address
 
-  @Field()
-  security_questions: [SecurityQuestions]
+  @Field(_type => [SecurityQuestions])
+  security_questions: SecurityQuestions[]
 
   @Field()
   birth_date: String
